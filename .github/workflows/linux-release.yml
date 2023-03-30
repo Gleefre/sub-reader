@@ -6,7 +6,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install SDL2
-      run: sudo apt-get install libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0
+      run: sudo apt-get install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0
     - name: setup SBCL
       run: sudo apt-get install sbcl
     - name: install quicklisp
