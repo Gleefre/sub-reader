@@ -5,6 +5,7 @@ all: clean build
 
 build:
 	$(LISP) --eval "(ql:quickload :deploy)" \
+		--load $(APP).asd \
 		--eval "(ql:quickload :$(APP))" \
 		--eval "(deploy:define-library cl-opengl-bindings::opengl :dont-deploy t)" \
 		--eval "(deploy:define-resource-directory data \"res/\")" \
