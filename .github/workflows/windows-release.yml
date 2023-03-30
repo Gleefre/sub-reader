@@ -60,5 +60,5 @@ jobs:
     - name: upload release
       uses: actions/upload-artifact@v3
       with:
-        name: sub-reader-win-release-${{ matrix.os }}
+        name: sub-reader-release-${{ matrix.os }}
         path: sub-reader-win.zip
