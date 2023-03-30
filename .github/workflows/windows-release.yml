@@ -1,0 +1,67 @@
+name: Windows build
+on: [workflow_dispatch]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: install msys2
+      uses: msys2/setup-msys2@v2
+      with:
+        install: mingw-w64-x86_64-libffi make mingw-w64-x86_64-pkg-config mingw-w64-x86_64-gcc
+  
+    - name: install sbcl
+      run: choco install sbcl
+    - name: install quicklisp
+      run: |
+        curl -O https://beta.quicklisp.org/quicklisp.lisp
+        C:/ProgramData/chocolatey/bin/sbcl.exe --load quicklisp.lisp --eval "(quicklisp-quickstart:install)" --eval "(ql-util:without-prompting (ql:add-to-init-file))" --eval "(print ql:*quicklisp-home*)" --eval "(print (user-homedir-pathname))" --quit
+      shell: msys2 {0}
+
+    - name: install sketch & cl-sdl2 & sdl2.kit from source
+      run: |
+        cd D:/a/_temp/msys64/home/runneradmin/quicklisp/local-projects/ # FIXME
+        git clone https://github.com/Gleefre/sketch # To have resizable windows; FIXME later
+        git clone https://github.com/Gleefre/cl-sdl2 # FIXME: https://github.com/lispgames/cl-sdl2
+        git clone https://github.com/lispgames/sdl2kit
+        git clone https://github.com/Gleefre/clock
+      shell: bash
+
+    - name: download SDL2
+      uses: albin-johansson/download-sdl2@v2
+      with:
+        # FIXME downgraded because of sdl wav bug
+        version: 2.0.22
+        sources_destination: .
+        binaries_destination: .
+    - name: download SDL2-IMAGE
+      uses: albin-johansson/download-sdl2-image@v2
+      with:
+        version: 2.6.2
+        sources_destination: .
+        binaries_destination: .
+    - name: download SDL-TTF
+      uses: albin-johansson/download-sdl2-ttf@v1
+      with:
+        version: 2.20.1
+        sources_destination: .
+        binaries_destination: .
+    - name: download SDL2-MIXER
+      uses: albin-johansson/download-sdl2-mixer@v1
+      with:
+        version: 2.6.2
+        sources_destination: .
+        binaries_destination: .
+
+    - name: build
+      run: LISP=C:/ProgramData/chocolatey/bin/sbcl.exe make win-bundle
+      shell: msys2 {0}
+    
+    - name: compress bundle
+      run: Compress-Archive -Path .\sub-reader -DestinationPath .\sub-reader-win
+
+    - name: upload release
+      uses: actions/upload-artifact@v3
+      with:
+        name: sub-reader-win-release
+        path: sub-reader-win.zip

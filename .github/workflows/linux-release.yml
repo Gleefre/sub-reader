@@ -1,0 +1,29 @@
+name: Linux build
+on: [workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: install SDL2
+      run: sudo apt-get install libsdl2-2.0-0 libsdl2-mixer-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0
+    - name: setup SBCL
+      run: sudo apt-get install sbcl
+    - name: install quicklisp
+      run: |
+        curl -O https://beta.quicklisp.org/quicklisp.lisp
+        sbcl --load quicklisp.lisp --eval "(quicklisp-quickstart:install)" --eval "(ql-util:without-prompting (ql:add-to-init-file))" --eval "(print ql:*quicklisp-home*)" --eval "(print (user-homedir-pathname))" --quit
+    - name: install sketch & cl-sdl2 & sdl2.kit from source
+      run: |
+        cd $HOME/quicklisp/local-projects/ # FIXME
+        git clone https://github.com/Gleefre/sketch # To have resizable windows; FIXME later
+        git clone https://github.com/Gleefre/cl-sdl2 # FIXME: https://github.com/lispgames/cl-sdl2
+        git clone https://github.com/lispgames/sdl2kit
+        git clone https://github.com/Gleefre/clock
+    - name: build
+      run: make lin-bundle
+    - name: upload release
+      uses: actions/upload-artifact@v3
+      with:
+        name: sub-reader-lin-release
+        path: sub-reader-lin.zip
