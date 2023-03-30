@@ -23,11 +23,10 @@
 
 (defvar *subtitles*
   (vector (make-sub '(0 60)
-                    (format nil
-                            "N - next  /  P - previous  /  R - reset~%~
-                             <space> - pause/run~%~
-                             <escape> - exit~%~
-                             L - load subtitle file (.srt)"))))
+"N - next  /  P - previous  /  R - reset
+<space> - pause/run
+<escape> - exit
+L - load subtitle file (.srt)")))
 
 (defsketch subtitle-window ((subs *subtitles*)
                             (sub-index 0)
