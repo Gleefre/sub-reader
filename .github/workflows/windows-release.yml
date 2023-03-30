@@ -2,7 +2,10 @@ name: Windows build
 on: [workflow_dispatch]
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [windows-2019, windows-2022]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: install msys2
@@ -57,5 +60,5 @@ jobs:
     - name: upload release
       uses: actions/upload-artifact@v3
       with:
-        name: sub-reader-win-release
+        name: sub-reader-win-release-${{ matrix.os }}
         path: sub-reader-win.zip
