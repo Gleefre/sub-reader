@@ -41,4 +41,4 @@
       (loop while lines
             for sub = (read-one)
             when sub collect sub into subs
-            finally (return (coerce subs 'vector))))))
+            finally (return (sort (coerce subs 'vector) #'< :key #'sub-start))))))
