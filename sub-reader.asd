@@ -7,7 +7,7 @@
                "simple-scanf"
                "sketch"
                "file-select"
-               "clock")
+               "stopclock")
 
   :components ((:file "parser")
                (:file "gui"))

@@ -1,6 +1,7 @@
 (defpackage #:sub-reader/gui
   (:use #:cl #:sub-reader/parser)
-  (:local-nicknames (#:sr/p #:sub-reader/parser))
+  (:local-nicknames (#:sr/p #:sub-reader/parser)
+                    (#:clock #:stopclock))
   (:import-from #:sketch
                 #:defsketch
                 #:+black+
