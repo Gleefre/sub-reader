@@ -1,7 +1,7 @@
 (defpackage #:sub-reader/gui
   (:use #:cl #:sub-reader/parser)
   (:local-nicknames (#:sr/p #:sub-reader/parser)
-                    (#:clock #:stopclock))
+                    (#:sc #:stopclock))
   (:import-from #:sketch
                 #:defsketch
                 #:+black+
@@ -31,19 +31,19 @@ L - load subtitle file (.srt)")))
 
 (defsketch subtitle-window ((subs *subtitles*)
                             (sub-index 0)
-                            (clock (clock:make-clock :paused t))
+                            (clock (sc:make-clock :paused t))
                             (show-late nil))
   ;; update current index
-  (unless (clock:paused clock)
+  (unless (sc:paused clock)
     (setf sub-index
-          (or (match-time (clock:time clock) subs)
+          (or (match-time (sc:time clock) subs)
               sub-index)))
   ;; show if time matches
   (when (and (<= 0 sub-index (1- (length subs)))
-             (or show-late (in-time (clock:time clock) (aref subs sub-index))))
+             (or show-late (in-time (sc:time clock) (aref subs sub-index))))
     (with-font (make-font :align :center
                           :size 50
-                          :color (if (in-time (clock:time clock) (aref subs sub-index))
+                          :color (if (in-time (sc:time clock) (aref subs sub-index))
                                      +black+
                                      (gray 0.2)))
       (text (sub-text (aref subs sub-index)) (/ sketch:width 2) 40)))
@@ -56,27 +56,27 @@ L - load subtitle file (.srt)")))
     (with-slots (sub-index subs clock show-late) app
       (case (sdl2:scancode keysym)
         ((:scancode-n)
-         (if (clock:paused clock)
+         (if (sc:paused clock)
              (when (< sub-index (1- (length subs)))
                (incf sub-index)
-               (setf (clock:time clock)
+               (setf (sc:time clock)
                      (sub-start (aref subs sub-index))))
-             (clock:shift clock 1/4)))
+             (sc:adjust clock 1/4)))
         ((:scancode-p)
-         (if (clock:paused clock)
+         (if (sc:paused clock)
              (when (> sub-index 0)
                (decf sub-index)
-               (setf (clock:time clock)
+               (setf (sc:time clock)
                      (sub-start (aref subs sub-index))))
-             (clock:shift clock -1/4)))
+             (sc:adjust clock -1/4)))
         ((:scancode-space)
-         (clock:toggle clock))
+         (sc:toggle clock))
         ((:scancode-u :scancode-r)
          (setf subs *subtitles*
                sub-index 0)
-         (clock:reset clock :paused t)
+         (sc:reset clock :paused t)
          (when (plusp (length subs))
-           (setf (clock:time clock)
+           (setf (sc:time clock)
                  (sub-start (aref subs 0)))))
         ((:scancode-h)
          (setf show-late (not show-late)))
@@ -87,9 +87,9 @@ L - load subtitle file (.srt)")))
              (setf *subtitles* (load-subtitles file))
              (setf subs *subtitles*
                    sub-index 0)
-             (clock:reset clock :paused t)
+             (sc:reset clock :paused t)
              (when (plusp (length subs))
-               (setf (clock:time clock)
+               (setf (sc:time clock)
                      (sub-start (aref subs 0)))))))))))
 
 (sketch::define-start-function start
