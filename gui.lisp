@@ -8,7 +8,8 @@
                 #:gray
                 #:text
                 #:with-font #:make-font)
-  (:export #:start))
+  (:export #:start
+           #:start-toplevel))
 
 (in-package #:sub-reader/gui)
 
@@ -22,12 +23,13 @@
         when (in-time time sub t)
         do (return i)))
 
-(defvar *subtitles*
-  (vector (make-sub '(0 60)
+(defparameter *subtitles*
+  (vector (make-sub '(0 10)
 "N - next  /  P - previous  /  R - reset
-<space> - pause/run
-<escape> - exit
-L - load subtitle file (.srt)")))
+L - load subtitle file (.srt)")
+          (make-sub '(10 20)
+"<ESCAPE> - exit
+<SPACE> - pause/run")))
 
 (defsketch subtitle-window ((subs *subtitles*)
                             (sub-index 0)
@@ -92,7 +94,9 @@ L - load subtitle file (.srt)")))
                (setf (sc:time clock)
                      (sub-start (aref subs 0)))))))))))
 
-(sketch::define-start-function start
+(sketch::define-start-function (start)
     subtitle-window
-    (:resizable t :flags '(:always-on-top)
-     :width 1000 :height 400))
+    (:resizable t :flags (list :always-on-top)
+     :width 1920 :height 200
+     :x 0
+     :y 0))

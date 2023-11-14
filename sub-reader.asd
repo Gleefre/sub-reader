@@ -15,4 +15,4 @@
   :defsystem-depends-on (:deploy)
   :build-operation #-darwin "deploy-op" #+darwin "osx-app-deploy-op"
   :build-pathname "sub-reader"
-  :entry-point "sub-reader/gui:start")
+  :entry-point "sub-reader/gui:start-toplevel")
